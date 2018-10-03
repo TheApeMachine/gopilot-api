@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package go.micro.srv.user;
+
+service UserService {
+	rpc CreateUser(User) returns (Response) {}
+	rpc GetUsers(GetRequest) returns (Response) {}
+}
+
+message User {
+	string id = 1;
+	string device_id = 2;
+}
+
+message GetRequest {}
+
+message Response {
+	bool created = 1;
+	User user = 2;
+	repeated User users = 3;
+}
