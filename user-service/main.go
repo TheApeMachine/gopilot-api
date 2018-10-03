@@ -20,6 +20,7 @@ type UserRepository struct {
 func (repo *UserRepository) Create(user *pb.User) (*pb.User, error) {
 	updated := append(repo.users, user)
 	repo.users = updated
+
 	return user, nil
 }
 

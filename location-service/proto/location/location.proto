@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package go.micro.srv.location;
+
+service LocationService {
+	rpc FindAll(Specification) returns (Response) {}
+}
+
+message Location {
+	string id = 1;
+	string name = 2;
+}
+
+message Specification {
+	string name = 1;
+}
+
+message Response {
+	Location location = 1;
+	repeated Location locations = 2;
+}
