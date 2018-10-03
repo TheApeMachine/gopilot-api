@@ -9,6 +9,7 @@ It is generated from these files:
 
 It has these top-level messages:
 	User
+	GetRequest
 	Response
 */
 package go_micro_srv_user
@@ -43,6 +44,7 @@ var _ server.Option
 
 type UserService interface {
 	CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
+	GetUsers(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error)
 }
 
 type userService struct {
@@ -73,15 +75,27 @@ func (c *userService) CreateUser(ctx context.Context, in *User, opts ...client.C
 	return out, nil
 }
 
+func (c *userService) GetUsers(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "UserService.GetUsers", in)
+	out := new(Response)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserService service
 
 type UserServiceHandler interface {
 	CreateUser(context.Context, *User, *Response) error
+	GetUsers(context.Context, *GetRequest, *Response) error
 }
 
 func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts ...server.HandlerOption) error {
 	type userService interface {
 		CreateUser(ctx context.Context, in *User, out *Response) error
+		GetUsers(ctx context.Context, in *GetRequest, out *Response) error
 	}
 	type UserService struct {
 		userService
@@ -96,4 +110,8 @@ type userServiceHandler struct {
 
 func (h *userServiceHandler) CreateUser(ctx context.Context, in *User, out *Response) error {
 	return h.UserServiceHandler.CreateUser(ctx, in, out)
+}
+
+func (h *userServiceHandler) GetUsers(ctx context.Context, in *GetRequest, out *Response) error {
+	return h.UserServiceHandler.GetUsers(ctx, in, out)
 }

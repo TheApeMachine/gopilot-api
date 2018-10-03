@@ -7,12 +7,12 @@ import (
 	"log"
 	"os"
 
+	microclient "github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/cmd"
 	pb "github.com/theapemachine/gopilot-api/user-service/proto/user"
-	"google.golang.org/grpc"
 )
 
 const (
-	address         = "localhost:50051"
 	defaultFilename = "user.json"
 )
 
@@ -31,15 +31,9 @@ func parseFile(file string) (*pb.User, error) {
 }
 
 func main() {
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	cmd.Init()
 
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-
-	defer conn.Close()
-
-	client := pb.NewUserServiceClient(conn)
+	client := pb.NewUserService("go.micro.srv.user", microclient.DefaultClient)
 	file := defaultFilename
 
 	if len(os.Args) > 1 {
@@ -52,7 +46,7 @@ func main() {
 		log.Fatalf("could not parse file: %v", err)
 	}
 
-	r, err := client.CreateUser(context.Background(), user)
+	r, err := client.CreateUser(context.TODO(), user)
 
 	if err != nil {
 		log.Fatalf("could not create: %v", err)
